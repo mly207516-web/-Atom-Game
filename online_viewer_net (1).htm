@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>لعبة تركيب الذرة | الصف الأول الإعدادي</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Cairo',sans-serif;
+}
+
+body{
+
+background:linear-gradient(135deg,#00111f,#002e5b,#00111f);
+overflow-x:hidden;
+color:white;
+min-height:100vh;
+position:relative;
+
+}
+
+/* خلفية الذرات */
+
+.atom{
+position:absolute;
+border:2px solid rgba(255,255,255,.2);
+border-radius:50%;
+animation:spin linear infinite;
+}
+
+.atom::before{
+content:"";
+position:absolute;
+width:12px;
+height:12px;
+background:#00e5ff;
+border-radius:50%;
+top:-6px;
+left:50%;
+transform:translateX(-50%);
+}
+
+.atom1{
+width:180px;
+height:180px;
+top:5%;
+left:5%;
+animation-duration:10s;
+}
+
+.atom2{
+width:260px;
+height:260px;
+right:5%;
+bottom:8%;
+animation-duration:15s;
+}
+
+.atom3{
+width:130px;
+height:130px;
+top:60%;
+left:20%;
+animation-duration:8s;
+}
+
+@keyframes spin{
+
+100%{
+transform:rotate(360deg);
+}
+
+}
+
+.container{
+
+width:95%;
+max-width:900px;
+margin:auto;
+padding:25px;
+
+}
+
+header{
+
+text-align:center;
+margin-top:25px;
+
+}
+
+header h1{
+
+font-size:40px;
+color:#00ffff;
+text-shadow:0 0 15px cyan;
+
+}
+
+header p{
+
+margin-top:10px;
+font-size:20px;
+
+}
+
+.card{
+
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(12px);
+border-radius:25px;
+padding:30px;
+margin-top:30px;
+box-shadow:0 0 25px rgba(0,255,255,.2);
+
+}
+
+#progress{
+
+width:100%;
+height:18px;
+background:#1d3557;
+border-radius:30px;
+overflow:hidden;
+margin-bottom:25px;
+
+}
+
+#progressBar{
+
+height:100%;
+width:0%;
+background:linear-gradient(90deg,#00ffd5,#00a8ff);
+
+transition:.5s;
+
+}
+
+#counter{
+
+font-size:20px;
+margin-bottom:20px;
+color:#ffd166;
+
+}
+
+#question{
+
+font-size:28px;
+line-height:1.8;
+margin-bottom:30px;
+
+}
+
+.answers{
+
+display:grid;
+gap:18px;
+
+}
+
+.answer{
+
+padding:18px;
+border:none;
+border-radius:15px;
+font-size:21px;
+cursor:pointer;
+background:#1565c0;
+color:white;
+transition:.3s;
+
+}
+
+.answer:hover{
+
+transform:scale(1.04);
+background:#00acc1;
+
+}
+
+.correct{
+
+background:#2ecc71!important;
+animation:pop .5s;
+
+}
+
+.wrong{
+
+background:#e53935!important;
+animation:shake .4s;
+
+}
+
+@keyframes shake{
+
+0%{transform:translateX(0);}
+25%{transform:translateX(-10px);}
+50%{transform:translateX(10px);}
+75%{transform:translateX(-10px);}
+100%{transform:translateX(0);}
+
+}
+
+@keyframes pop{
+
+50%{
+
+transform:scale(1.1);
+
+}
+
+}
+
+#result{
+
+display:none;
+text-align:center;
+
+}
+
+#score{
+
+font-size:45px;
+margin:20px;
+color:#00ffcc;
+
+}
+
+#message{
+
+font-size:28px;
+margin-bottom:25px;
+
+}
+
+.restart{
+
+padding:18px 40px;
+font-size:22px;
+background:#00b894;
+border:none;
+border-radius:20px;
+cursor:pointer;
+color:white;
+
+}
+
+.restart:hover{
+
+background:#00cec9;
+
+}
+
+/* النجوم */
+
+.star{
+
+position:absolute;
+width:10px;
+height:10px;
+background:gold;
+border-radius:50%;
+pointer-events:none;
+animation:explode .8s linear forwards;
+
+}
+
+@keyframes explode{
+
+100%{
+
+opacity:0;
+transform:translate(var(--x),var(--y)) scale(0);
+
+}
+
+}
+
+.share{
+
+margin-top:25px;
+text-align:center;
+
+}
+
+.share button{
+
+padding:15px 30px;
+font-size:20px;
+border:none;
+border-radius:15px;
+background:#ff9800;
+color:white;
+cursor:pointer;
+
+}
+
+.share button:hover{
+
+background:#fb8c00;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="atom atom1"></div>
+<div class="atom atom2"></div>
+<div class="atom atom3"></div>
+
+<div class="container">
+
+<header>
+
+<h1>🧪 لعبة تركيب الذرة</h1>
+
+<p>للصف الأول الإعدادي - المنهج المصري</p>
+
+</header>
+
+<div class="card" id="game">
+
+<div id="progress">
+
+<div id="progressBar"></div>
+
+</div>
+
+<div id="counter">
+
+السؤال 1 من 10
+
+</div>
+
+<div id="question">
+
+جارٍ تحميل السؤال...
+
+</div>
+
+<div class="answers" id="answers">
+
+</div>
+
+</div>
+
+<div class="card" id="result">
+
+<h2>🎉 انتهت اللعبة</h2>
+
+<div id="score"></div>
+
+<div id="message"></div>
+
+<button class="restart" onclick="restartGame()">
+
+إعادة اللعب
+
+</button>
+
+<div class="share">
+
+<button onclick="shareGame()">
+
+📤 مشاركة اللعبة
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+//====================================
+// قاعدة بيانات الأسئلة
+//====================================
+
+const questions=[{
+question:"مم تتكون الذرة؟",
+answers:[
+"بروتونات ونيوترونات وإلكترونات",
+"خلايا وأنسجة",
+"جزيئات فقط",
+"أحماض وقواعد"
+],
+correct:0
+},
+
+{
+question:"أين توجد البروتونات داخل الذرة؟",
+answers:[
+"في السحابة الإلكترونية",
+"في النواة",
+"حول النواة",
+"خارج الذرة"
+],
+correct:1
+},
+
+{
+question:"ما شحنة الإلكترون؟",
+answers:[
+"موجبة",
+"سالبة",
+"متعادلة",
+"ليس له شحنة"
+],
+correct:1
+},
+
+{
+question:"أي الجسيمات التالية كتلتها صغيرة جدًا مقارنة بالبروتون والنيوترون؟",
+answers:[
+"البروتون",
+"النيوترون",
+"الإلكترون",
+"جميعها متساوية"
+],
+correct:2
+},
+
+{
+question:"ما الجسيم الذي لا يحمل شحنة كهربائية؟",
+answers:[
+"الإلكترون",
+"البروتون",
+"النيوترون",
+"البوزيترون"
+],
+correct:2
+},
+
+{
+question:"في الذرة المتعادلة كهربياً يكون عدد...",
+answers:[
+"البروتونات أكبر من الإلكترونات",
+"الإلكترونات أكبر من البروتونات",
+"البروتونات يساوي الإلكترونات",
+"النيوترونات يساوي الإلكترونات"
+],
+correct:2
+},
+
+{
+question:"ما الذي يدور حول نواة الذرة؟",
+answers:[
+"البروتونات",
+"النيوترونات",
+"الإلكترونات",
+"الجزيئات"
+],
+correct:2
+},
+
+{
+question:"صح أم خطأ: معظم كتلة الذرة تتركز في النواة.",
+answers:[
+"صح",
+"خطأ"
+],
+correct:0
+},
+
+{
+question:"صح أم خطأ: الإلكترونات تحمل شحنة موجبة.",
+answers:[
+"صح",
+"خطأ"
+],
+correct:1
+},
+
+{
+question:"صح أم خطأ: النواة تحتوي على البروتونات والنيوترونات.",
+answers:[
+"صح",
+"خطأ"
+],
+correct:0
+}
+
+];
+
+//==================================
+// متغيرات اللعبة
+//==================================
+
+let currentQuestion=0;
+let score=0;
+
+//==================================
+// أصوات اللعبة
+//==================================
+
+const successSound=new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
+
+const failSound=new Audio("https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg");
+
+const finishSound=new Audio("https://actions.google.com/sounds/v1/cartoon/concussive_hit_guitar_boing.ogg");
+
+//==================================
+// يبدأ الجزء البرمجي في الجزء الثالث
+//==================================//==================================
+// عرض السؤال
+//==================================
+
+const questionElement=document.getElementById("question");
+const answersElement=document.getElementById("answers");
+const counterElement=document.getElementById("counter");
+const progressBar=document.getElementById("progressBar");
+
+function loadQuestion(){
+
+const q=questions[currentQuestion];
+
+counterElement.innerHTML=`السؤال ${currentQuestion+1} من ${questions.length}`;
+
+progressBar.style.width=((currentQuestion)/questions.length)*100+"%";
+
+questionElement.innerHTML=q.question;
+
+answersElement.innerHTML="";
+
+q.answers.forEach((answer,index)=>{
+
+const btn=document.createElement("button");
+
+btn.className="answer";
+
+btn.innerHTML=answer;
+
+btn.onclick=()=>checkAnswer(index,btn);
+
+answersElement.appendChild(btn);
+
+});
+
+}
+
+//==================================
+// التحقق من الإجابة
+//==================================
+
+function checkAnswer(index,button){
+
+const q=questions[currentQuestion];
+
+const buttons=document.querySelectorAll(".answer");
+
+buttons.forEach(b=>b.disabled=true);
+
+if(index===q.correct){
+
+score++;
+
+button.classList.add("correct");
+
+successSound.currentTime=0;
+successSound.play();
+
+createStars();
+
+}else{
+
+button.classList.add("wrong");
+
+buttons[q.correct].classList.add("correct");
+
+failSound.currentTime=0;
+failSound.play();
+
+}
+
+setTimeout(()=>{
+
+currentQuestion++;
+
+if(currentQuestion<questions.length){
+
+loadQuestion();
+
+}else{
+
+showResult();
+
+}
+
+},1200);
+
+}
+
+//==================================
+// مؤثر النجوم
+//==================================
+
+function createStars(){
+
+for(let i=0;i<35;i++){
+
+const star=document.createElement("div");
+
+star.className="star";
+
+star.style.left=(window.innerWidth/2)+"px";
+
+star.style.top=(window.innerHeight/2)+"px";
+
+star.style.setProperty("--x",(Math.random()*600-300)+"px");
+
+star.style.setProperty("--y",(Math.random()*600-300)+"px");
+
+document.body.appendChild(star);
+
+setTimeout(()=>{
+
+star.remove();
+
+},800);
+
+}
+
+}
+
+//==================================
+// عرض النتيجة
+//==================================
+
+function showResult(){
+
+finishSound.play();
+
+progressBar.style.width="100%";
+
+document.getElementById("game").style.display="none";
+
+document.getElementById("result").style.display="block";
+
+document.getElementById("score").innerHTML=`${score} / ${questions.length}`;
+
+let msg="";
+
+if(score==10){
+
+msg="🏆 ممتاز جدًا! أنت عالم ذرات صغير.";
+
+}else if(score>=8){
+
+msg="🌟 أداء رائع.. استمر.";
+
+}else if(score>=6){
+
+msg="👍 جيد جدًا.. حاول الوصول للدرجة الكاملة.";
+
+}else{
+
+msg="📚 تحتاج إلى مراجعة درس تركيب الذرة ثم أعد المحاولة.";
+
+}
+
+document.getElementById("message").innerHTML=msg;
+
+}
+
+//==================================
+// إعادة اللعبة
+//==================================
+
+function restartGame(){
+
+currentQuestion=0;
+
+score=0;
+
+document.getElementById("game").style.display="block";
+
+document.getElementById("result").style.display="none";
+
+loadQuestion();
+
+}
+
+//==================================
+// مشاركة اللعبة
+//==================================
+
+function shareGame(){
+
+const url=window.location.href;
+
+if(navigator.share){
+
+navigator.share({
+
+title:"لعبة تركيب الذرة",
+
+text:"اختبر معلوماتك في درس تركيب الذرة للصف الأول الإعدادي.",
+
+url:url
+
+});
+
+}else{
+
+navigator.clipboard.writeText(url);
+
+alert("تم نسخ رابط اللعبة إلى الحافظة.");
+
+}
+
+}
+
+//==================================
+// تشغيل اللعبة
+//==================================
+
+loadQuestion();
+
+</script>
+
+</body>
+</html>
